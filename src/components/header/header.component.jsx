@@ -9,11 +9,17 @@ const Header = () => (
       <Logo className="logo" />
     </Link>
     <div className="options">
+    <Link className="option" to="/">
+        HOME
+      </Link>
       <Link className="option" to="/shop">
         SHOP
       </Link>
       <Link className="option" to="/contact">
         CONTACT
+      </Link>
+      <Link className="option" to="/signin">
+        SIGNIN
       </Link>
     </div>
   </div>
