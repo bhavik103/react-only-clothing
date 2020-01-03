@@ -1,10 +1,8 @@
 import React from "react";
-
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-button/custom-button.component";
-
 import { auth, createUserProfileDocument } from "../../firebase/firebase.utils";
-
+import SnackBar from "../snack-bar/snack-bar.component";
 import "./sign-up.styles.scss";
 
 class SignUp extends React.Component {
@@ -15,7 +13,9 @@ class SignUp extends React.Component {
       displayName: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
+      Show: false,
+      Showing: false
     };
   }
 
@@ -37,12 +37,20 @@ class SignUp extends React.Component {
 
       await createUserProfileDocument(user, { displayName });
 
-      this.setState({
-        displayName: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-      });
+      this.setState(
+        {
+          displayName: "",
+          email: "",
+          password: "",
+          confirmPassword: ""
+        },
+        () => {
+          this.setState({ Show: true, Showing: true });
+          setTimeout(() => {
+            this.setState({ Show: false, Showing: false });
+          }, 2000);
+        }
+      );
     } catch (error) {
       console.error(error);
     }
@@ -95,6 +103,7 @@ class SignUp extends React.Component {
           />
           <CustomButton type="submit">SIGN UP</CustomButton>
         </form>
+        <SnackBar Show={this.state.Show} msg={"Logged in successfully!"} />
       </div>
     );
   }

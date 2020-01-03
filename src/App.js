@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Redirect } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/hompage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
@@ -29,6 +29,8 @@ class App extends React.Component {
               id: snapShot.id,
               ...snapShot.data()
             }
+          }, () => {
+            console.log(this.state)
           });
         });
       }
@@ -47,7 +49,13 @@ class App extends React.Component {
           <Header currentUser={this.state.currentUser} />
           <Route exact path="/" component={HomePage} />
           <Route exact path="/shop" component={ShopPage} />
-          <Route exact path="/signin" component={SignInAndSignUpPagePage} />
+          <Route exact path="/signin" component={SignInAndSignUpPagePage} render={() => (
+            this.state.currentUser === null ? (
+              <Redirect to="/signin" />
+            ) : (
+              <Redirect to="/" />
+            )
+          )}/>
         </div>
       </BrowserRouter>
     );

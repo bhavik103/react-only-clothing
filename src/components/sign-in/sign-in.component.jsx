@@ -2,26 +2,38 @@ import React, { Component } from "react";
 import "./sign-in.styles.scss";
 import FormInput from "../form-input/form-input.component";
 import CustomButton from "../custom-button/custom-button.component";
-import { auth, signInWithGoogle } from "../../firebase/firebase.utils";
+import { auth } from "../../firebase/firebase.utils";
+import SnackBar from "../snack-bar/snack-bar.component";
+import firebase from "firebase/app";
 
 class SignIn extends Component {
   constructor() {
     super();
 
+    // ******** DEFINED STATE ********
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      Show: false,
+      Showing: false
     };
   }
 
+  // ******** EMAIL LOGIN ********
   handleSubmit = async event => {
     event.preventDefault();
+    if (this.state.Showing) return;
 
     const { email, password } = this.state;
 
     try {
       await auth.signInWithEmailAndPassword(email, password);
-      this.setState({ email: "", password: "" });
+      this.setState({ email: "", password: "" }, () => {
+        this.setState({ Show: true, Showing: true });
+        setTimeout(() => {
+          this.setState({ Show: false, Showing: false });
+        }, 2000);
+      });
     } catch (error) {
       console.log("NOT LOGGED IN ", error);
     }
@@ -29,12 +41,23 @@ class SignIn extends Component {
     this.setState({ email: "", password: "" });
   };
 
+  // ******** GOOGLE LOGIN ********
+  signInWithGoogle = () => {
+    auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(() => {
+      this.setState({ Show: true, Showing: true });
+      setTimeout(() => {
+        this.setState({ Show: false, Showing: false });
+      }, 2000);
+    });
+  };
+
+  // ******** INPUT CHANGE ********
   handleChange = event => {
     const { value, name } = event.target;
-    console.log(event.target);
     this.setState({ [name]: value });
   };
 
+  // ******** RENDER ********
   render() {
     return (
       <div className="sign-in">
@@ -62,14 +85,14 @@ class SignIn extends Component {
 
           <div className="buttons">
             <CustomButton type="submit">Sign In</CustomButton>
-            <CustomButton onClick={signInWithGoogle} isGoogleSignIn>
+            <CustomButton onClick={this.signInWithGoogle} isGoogleSignIn>
               Sign In With Google
             </CustomButton>
           </div>
         </form>
+        <SnackBar Show={this.state.Show} msg={"Logged in successfully!"} />
       </div>
     );
   }
 }
-
 export default SignIn;
